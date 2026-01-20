@@ -1,8 +1,7 @@
 import os
 from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from chromadb import EmbeddingFunction
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from openai import embeddings
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -14,8 +13,8 @@ class RagEngine:
         
         db_directory = "./chroma_db"
         
-        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-        
+        self.embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+
         # Vector database
         self.vector_store = Chroma (
             collection_name="example_collection",
@@ -23,8 +22,8 @@ class RagEngine:
             persist_directory = db_directory
         )
         
-        self.llm = ChatOpenAI(
-            model=os.getenv("GPT_MODEL", "gpt-4o-mini"),
+        self.llm = ChatGoogleGenerativeAI(
+            model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
             temperature=0
         )
             
