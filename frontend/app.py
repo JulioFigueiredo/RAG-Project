@@ -6,11 +6,17 @@ st.set_page_config(page_title="RAG Chatbot", page_icon="🤖")
 st.title("🤖 Chat with Your Data (RAG)")
 
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+MAX_FILE_SIZE_MB = 20
 
 uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
 
 if uploaded_file:
-    if "last_file_name" not in st.session_state or st.session_state.last_file_name != uploaded_file.name:
+    file_size_mb = uploaded_file.size / (1024 * 1024)
+    
+    if file_size_mb > MAX_FILE_SIZE_MB:
+        st.error(f"❌ File too large! ({file_size_mb:.1f}MB) Maximum: {MAX_FILE_SIZE_MB}MB")
+    elif "last_file_name" not in st.session_state or st.session_state.last_file_name != uploaded_file.name:
+        st.info(f"📄 File: {uploaded_file.name} ({file_size_mb:.1f}MB)")
         
         files = {"file": (uploaded_file.name, uploaded_file, "application/pdf")}
         
@@ -22,10 +28,11 @@ if uploaded_file:
                     st.success("✅ PDF processed and vectorized successfully!")
                     st.session_state.last_file_name = uploaded_file.name
                 else:
-                    st.error(f"Backend Error: {response.text}")
+                    error_msg = response.json().get("detail", response.text)
+                    st.error(f"❌ Backend Error: {error_msg}")
                     
             except Exception as e:
-                st.error(f"Connection Error: {e}")
+                st.error(f"❌ Connection Error: {e}")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
