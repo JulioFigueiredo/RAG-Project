@@ -11,6 +11,10 @@ rag_engine = RagEngine()
 class QueryRequest(BaseModel):
     question: str
 
+@router.get("/")
+def read_root():
+    return {"message": "API is working!"}
+
 @router.post("/upload")
 def upload_file(file: UploadFile = File(...)):
 
