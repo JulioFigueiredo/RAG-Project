@@ -8,7 +8,7 @@ st.title("🤖 Chat with Your Data (RAG)")
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 MAX_FILE_SIZE_MB = 20
 
-uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
+uploaded_file = st.file_uploader("Upload your PDF", type="pdf", max_upload_size=MAX_FILE_SIZE_MB)
 
 if uploaded_file:
     file_size_mb = uploaded_file.size / (1024 * 1024)
